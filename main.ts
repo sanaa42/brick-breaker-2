@@ -12,15 +12,21 @@ namespace SpriteKind {
 sprites.onOverlap(SpriteKind.ball, SpriteKind.brick, function (sprite, otherSprite) {
     if (true) {
         info.changeScoreBy(15)
-        otherSprite.destroy(effects.ashes, 200)
         sprite.setVelocity(sprite.vx, sprite.vy * -1)
+        otherSprite.destroy(effects.ashes, 200)
         numBricks += -1
     }
 })
+function changeScoreWhenOverlapSpecial (sprite: Sprite, otherSprite: Sprite) {
+    whichProjectile()
+    info.changeScoreBy(15)
+    sprite.setVelocity(sprite.vx, sprite.vy * -1)
+    otherSprite.destroy(effects.ashes, 200)
+    numBricks += -1
+}
 function scoreChange () {
     if (projectileNum == 2) {
         info.changeScoreBy(30)
-        info.startCountdown(10)
     } else {
         info.changeScoreBy(15)
     }
@@ -29,7 +35,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     console.log(convertToText(numBricks))
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.brick, function (sprite, otherSprite) {
-    if (1 == kindBrick) {
+    if (1 == projectileNum) {
         if (true) {
             sprite.setVelocity(sprite.vx, sprite.vy * -1)
             numBricks += -1
@@ -38,11 +44,28 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.brick, function (sprite, oth
         }
     }
 })
+sprites.onOverlap(SpriteKind.ball, SpriteKind.heart, function (sprite, otherSprite) {
+    changeScoreWhenOverlapSpecial(sprite, otherSprite)
+    projectile3 = sprites.createProjectileFromSprite(img`
+. 2 2 . 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+. . 2 2 2 . . 
+. . . 2 . . . 
+. . . . . . . 
+`, otherSprite, 0, 50)
+    projectileNum = 3
+    sprite.setVelocity(sprite.vx, sprite.vy * -1)
+    if (3 == kindBrick) {
+    	
+    }
+})
 sprites.onOverlap(SpriteKind.ball, SpriteKind.edge, function (sprite, otherSprite) {
     sprite.setVelocity(sprite.vx * -1, sprite.vx)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.specialBrick, function (sprite, otherSprite) {
-    if (1 == kindBrick) {
+    if (1 == projectileNum) {
         scoreChange()
         otherSprite.destroy(effects.ashes, 200)
         sprite.setVelocity(sprite.vx, sprite.vy * -1)
@@ -53,25 +76,24 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.specialBrick, function (spri
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
     whichProjectile()
 })
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.edge, function (sprite, otherSprite) {
-    if (1 == kindBrick) {
-        sprite.setVelocity(sprite.vx * -1, sprite.vx)
+sprites.onOverlap(SpriteKind.ball, SpriteKind.expand, function (sprite, otherSprite) {
+    changeScoreWhenOverlapSpecial(sprite, otherSprite)
+    projectile4 = sprites.createProjectileFromSprite(img`
+. . 4 . . . . 4 . . 
+. 4 . . . . . . 4 . 
+4 4 4 4 4 4 4 4 4 4 
+. 4 . . . . . . 4 . 
+. . 4 . . . . 4 . . 
+`, otherSprite, 0, 50)
+    projectileNum = 4
+    sprite.setVelocity(sprite.vx, sprite.vy * -1)
+    if (4 == kindBrick) {
+    	
     }
 })
-sprites.onOverlap(SpriteKind.ball, SpriteKind.specialBrick, function (sprite, otherSprite) {
-    info.changeScoreBy(15)
-    otherSprite.destroy(effects.ashes, 200)
-    sprite.setVelocity(sprite.vx, sprite.vy * -1)
-    numBricks += -1
-    if (1 == kindBrick) {
-        projectile = sprites.createProjectileFromSprite(img`
-. c c . 
-c c c c 
-c c c c 
-. c c . 
-`, otherSprite, 0, 50)
-        projectileNum = 1
-        sprite.setVelocity(sprite.vx, sprite.vy * -1)
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.edge, function (sprite, otherSprite) {
+    if (1 == projectileNum) {
+        sprite.setVelocity(sprite.vx * -1, sprite.vx)
     }
 })
 function buildBricks () {
@@ -83,9 +105,27 @@ function buildBricks () {
         column = 0
     }
 }
+sprites.onOverlap(SpriteKind.ball, SpriteKind.timesTwo, function (sprite, otherSprite) {
+    changeScoreWhenOverlapSpecial(sprite, otherSprite)
+    projectile2 = sprites.createProjectileFromSprite(img`
+. . . . . . . 
+. . . . 9 9 . 
+9 . 9 . . . 9 
+. 9 . . . 9 . 
+9 . 9 . 9 . . 
+. . . . . 9 9 
+. . . . . . . 
+`, otherSprite, 0, 50)
+    projectileNum = 2
+    sprite.setVelocity(sprite.vx, sprite.vy * -1)
+    if (2 == kindBrick) {
+    	
+    }
+})
 info.onCountdownEnd(function () {
-    if (projectileNum == 2) {
-        info.changeScoreBy(15)
+    let projectileNum2 = 0
+    if (projectileNum2 == 2) {
+        projectileNum = 0
     } else {
         paddle.setImage(img`
 e e e e e e e e e e e e e e e e 
@@ -114,7 +154,7 @@ sprites.onOverlap(SpriteKind.ball, SpriteKind.Player, function (sprite, otherSpr
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.top, function (sprite, otherSprite) {
-    if (1 <= kindBrick) {
+    if (1 <= projectileNum) {
         sprite.setVelocity(sprite.vx, sprite.vy * -1)
     }
 })
@@ -153,6 +193,7 @@ f f e e e e e e e e e e e e e e e e f f
 . . . . . . . . . . . . . . . . . . . . 
 `)
         info.startCountdown(10)
+        projectileNum4 = 0
     }
 }
 function createBrick (x: number, y: number) {
@@ -170,7 +211,7 @@ f c a a a a 1 1 1 1 a a a a c f
 f c a a a a a 1 1 a a a a a c f 
 f a c c c c c c c c c c c c a f 
 f f f f f f f f f f f f f f f f 
-`, SpriteKind.specialBrick)
+`, SpriteKind.moreBalls)
             kindBrick = 1
         } else {
             brickvar = sprites.create(img`
@@ -195,8 +236,8 @@ f 8 6 6 6 1 6 6 6 1 6 6 6 6 8 f
 f 8 6 6 1 6 1 6 1 6 6 6 6 6 8 f 
 f 6 8 8 8 8 8 8 8 1 1 8 8 8 6 f 
 f f f f f f f f f f f f f f f f 
-`, SpriteKind.specialBrick)
-            kindBrick2 = 2
+`, SpriteKind.timesTwo)
+            kindBrick = 2
         } else {
             brickvar = sprites.create(img`
 f f f f f f f f f f f f f f f f 
@@ -221,8 +262,8 @@ f e 2 2 2 2 1 1 1 2 2 2 2 2 e f
 f e 2 2 2 2 2 1 2 2 2 2 2 2 e f 
 f 2 e e e e e e e e e e e e 2 f 
 f f f f f f f f f f f f f f f f 
-`, SpriteKind.specialBrick)
-                kindBrick3 = 3
+`, SpriteKind.heart)
+                kindBrick = 3
             } else {
                 brickvar = sprites.create(img`
 f f f f f f f f f f f f f f f f 
@@ -258,8 +299,8 @@ f e 4 d d d d d d d d d d d e f
 f e 4 4 d 4 4 4 4 4 4 4 d 4 e f 
 f 4 e e e d e e e e e d e e 4 f 
 f f f f f f f f f f f f f f f f 
-`, SpriteKind.specialBrick)
-            kindBrick4 = 4
+`, SpriteKind.expand)
+            kindBrick = 4
         } else {
             brickvar = sprites.create(img`
 f f f f f f f f f f f f f f f f 
@@ -287,8 +328,21 @@ f f f f f f f f f f f f f f f f
     brickvar.setPosition(x, y)
     numBricks += 1
 }
+sprites.onOverlap(SpriteKind.ball, SpriteKind.moreBalls, function (sprite, otherSprite) {
+    changeScoreWhenOverlapSpecial(sprite, otherSprite)
+    if (1 == kindBrick) {
+        projectile = sprites.createProjectileFromSprite(img`
+. c c . 
+c c c c 
+c c c c 
+. c c . 
+`, otherSprite, 0, 50)
+        projectileNum = 1
+        sprite.setVelocity(sprite.vx, sprite.vy * -1)
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Player, function (sprite, otherSprite) {
-    if (kindBrick3 == 0) {
+    if (true) {
     	
     }
 })
@@ -299,12 +353,13 @@ let startball = 0
 let brickvar: Sprite = null
 let verySpecial = 0
 let randNum = 0
+let projectileNum4 = 0
 let projectileNum3 = 0
 let projectile: Sprite = null
+let projectile2: Sprite = null
+let projectile4: Sprite = null
+let projectile3: Sprite = null
 let projectileNum = 0
-let kindBrick3 = 0
-let kindBrick4 = 0
-let kindBrick2 = 0
 let kindBrick = 0
 let numBricks = 0
 let column = 0
@@ -877,9 +932,9 @@ let ball2 = sprites.create(img`
 column = 0
 numBricks = 0
 kindBrick = 0
-kindBrick2 = 0
-kindBrick4 = 0
-kindBrick3 = 0
+let kindBrick2 = 0
+let kindBrick4 = 0
+let kindBrick3 = 0
 info.setScore(0)
 info.setLife(3)
 buildBricks()
